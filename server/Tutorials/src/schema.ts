@@ -48,10 +48,15 @@ const typeDefs = gql`
   }
 
   type Query {
-    launches: [Launch]!
+    launches(pageSize: Int, after: String): LaunchConnection!
     launch(id: ID!): Launch
-    # Queries for the current user
     me: User
+  }
+
+  type LaunchConnection {
+    cursor: String!
+    hasMore: Boolean!
+    launches: [Launch]!
   }
 `
 

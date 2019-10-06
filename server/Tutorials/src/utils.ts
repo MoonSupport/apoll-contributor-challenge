@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-export const someThing = ({
+export const paginationResults = ({
   after: cursor,
   pageSize = 20,
   results,
