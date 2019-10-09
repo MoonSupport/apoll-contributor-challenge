@@ -2,8 +2,8 @@ import { paginationResults } from './utils'
 
 export default {
   Query: {
-    launches: async (_: any, { pageSize = 20, after }: any, { dataSources }: any) => {
-      const allLaunches = await dataSources.launchAPI.getAllLaunches()
+    launches: async (_: any, { pageSize = 20, after }: any, context: any) => {
+      const allLaunches = await context.dataSources.launchAPI.getAllLaunches()
       // we want these in reverse chronological order
       allLaunches.reverse()
       const launches = paginationResults({

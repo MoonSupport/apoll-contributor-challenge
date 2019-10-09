@@ -8,7 +8,7 @@ import UserAPI from './datasources/user'
 
 import isEmail from 'isemail'
 
-const store = createStore()
+const store = createStore() // Model
 
 const server = new ApolloServer({
   context: async ({ req }) => {
@@ -19,7 +19,8 @@ const server = new ApolloServer({
     const user: any = (users && users[0]) || null
 
     return { user: { ...user.dataValues } }
-  },
+  }, //컨텍스트에는 권한을 부여했다.
+
   typeDefs,
   resolvers,
   dataSources: () => ({
@@ -28,6 +29,6 @@ const server = new ApolloServer({
   }),
 })
 
-server.listen().then(({ url }: any) => {
+server.listen(4048).then(({ url }: any) => {
   console.log(`🚀 Server ready at ${url}`)
 })

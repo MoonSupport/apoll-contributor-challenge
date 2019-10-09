@@ -1,14 +1,17 @@
-const { DataSource } = require('apollo-datasource')
-const isEmail = require('isemail')
+import { DataSource } from 'apollo-datasource'
+import isEmail from 'isemail'
 
 class UserAPI extends DataSource {
+  store: any // 스토어도 있는 것 같고?
+  context: any // 컨텍스트가 있다?
+
   constructor({ store }: any) {
     super()
-    this.store = store
+    this.store = store // Model
   }
 
   initialize(config: any) {
-    this.context = config.context
+    this.context = config.context //
   }
 
   /**
