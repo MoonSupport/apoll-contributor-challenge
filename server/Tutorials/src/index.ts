@@ -27,6 +27,10 @@ const server = new ApolloServer({
     launchAPI: new LaunchAPI(),
     userAPI: new UserAPI({ store }),
   }),
+  engine: {
+    apiKey: 'service:fs-9253:aXUxfZ1VIkSUDMl7mIEq1g',
+    schemaTag: 'production',
+  },
 })
 
 server.listen(4048).then(({ url }: any) => {
