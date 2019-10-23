@@ -94,7 +94,7 @@
     "babel-plugin-transform-regenerator": "6.26.0",
     "chai": "4.1.2",
     "coveralls": "3.0.0",
-    "eslint": "4.16.0",
+    "eslint": "4.18.2",
     "flow-bin": "0.64.0",
     "isparta": "4.0.0",
     "mocha": "5.0.0",
