@@ -27,7 +27,7 @@ class DataLoader {
       throw new TypeError('Error')
     }
     this._batchLoadFn = batchLoadFn
-    this._options = options
+    this._options = options // optional
     this._promiseCache = getValidCacheMap(options)
     this._queue = []
   }
@@ -44,10 +44,11 @@ class DataLoader {
     // 옵션이 없을때 true, 옵션 캐시가 true라면 true
     var cacheKeyFn = options && options.cacheKeyFn
     var cacheKey = cacheKeyFn ? cacheKeyFn(key) : key
-
     // If caching and there is a cache-hit, return cached Promise.
     if (shouldCache) {
       var cachePromise = this._promiseCache.get(cacheKey)
+      // 중복을 제거하는 느낌 cachePromise가 있으면 그냥 cachePromise를 리턴
+      // cache-hit => 캐시가 존재하는거. 캐시를 생성할 필요가 없이 캐시에서 데이터를 가져올 수 있는 것
       if (cachePromise) {
         return cachePromise
       }
@@ -116,11 +117,10 @@ var enqueuePostPromiseJob =
 var resolvedPromise
 
 function dispatchQueue(loader) {
-  // job(loader) 실행
-  var queue = loader._queue
-  loader._queue = []
+  var queue = loader._queue //로더에 있는 큐를 가져오고 로컬 함수 큐에 담음
+  loader._queue = [] //로더의 큐는 리셋
 
-  var maxBatchSize = loader._options
+  var maxBatchSize = loader._options // 옵션 뒤짐
   if (maxBatchSize && maxBatchSize > 0 && maxBatchSize < queue.length) {
     //maxBatchSize가 queue의 길이보다 작고 0보다 크다면.
     for (var i = 0; i < queue.length / maxBatchSize; i++) {
@@ -133,10 +133,10 @@ function dispatchQueue(loader) {
 }
 
 function dispatchQueueBatch(loader, queue) {
-  var keys = queue.map(({ key }) => key)
+  var keys = queue.map(({ key }) => key) // 큐의 키들
 
-  var batchLoadFn = loader._batchLoadFn
-  var batchPromise = batchLoadFn(keys)
+  var batchLoadFn = loader._batchLoadFn // 배치로드할 함수
+  var batchPromise = batchLoadFn(keys) //
 
   if (!batchPromise || typeof batchPromise.then !== 'function') {
     return failedDispatch(loader, queue, new TypeError('배치 프라미스가 없거나 배치 프라미스 덴이 펑션이 아님'))
@@ -148,8 +148,8 @@ function dispatchQueueBatch(loader, queue) {
         throw new TypeError('values는 어레이여야함')
       }
 
-      console.log('value is :', values)
-      console.log('key is :', keys)
+      // console.log('value is :', values)
+      // console.log('key is :', keys)
 
       if (values.length !== keys.length) {
         throw new TypeError('values 길이랑 키 길이랑 다름')
@@ -185,12 +185,13 @@ function failedDispatch(loader, queue, error) {
         }, 1000)
       })
   )
-  // var promise1 = await a.load(1)
-  // var promise2 = await a.load(2)
-  // var promise3 = await a.load(3)
+  var promise1 = a.load(1)
+  var promise2 = a.load(2)
+  var promise3 = a.load(3)
+  var promise3_1 = a.load(3)
   // var promise4 = await a.load(4)
-  var promise5 = await a.loadMany([1, 2, 3, 4])
-  console.log(promise5)
+  // var promise5 = await a.loadMany([1, 2, 3, 4, 3])
+  console.log(promise3_1)
 })()
 
 // var enqueuePostPromiseJob =

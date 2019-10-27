@@ -26,8 +26,6 @@ import {
 import { Response as ExpressResponse } from 'express'
 
 import { parseBody } from './parseBody'
-import { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue'
-import { ExecutionResultDataDefault } from 'graphql/execution/execute'
 import { renderGraphiQL, GraphiQLOptions } from './renderGraphiQL'
 
 type Request = IncomingMessage
