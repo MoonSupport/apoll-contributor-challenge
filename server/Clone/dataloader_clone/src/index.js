@@ -50,7 +50,7 @@ class DataLoader {
       // 중복을 제거하는 느낌 cachePromise가 있으면 그냥 cachePromise를 리턴
       // cache-hit => 캐시가 존재하는거. 캐시를 생성할 필요가 없이 캐시에서 데이터를 가져올 수 있는 것
       if (cachePromise) {
-        return cachePromise
+        return cachePromise //걸리는 곳
       }
     }
     // Otherwise, produce a new Promise for this value.
