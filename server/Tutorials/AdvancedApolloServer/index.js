@@ -1,45 +1,64 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { GraphQLScalarType } = require('graphql')
+const { Kind } = require('graphql/language')
+const { gql, ApolloServer } = require('apollo-server')
 
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
 const typeDefs = gql`
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
+  scalar Date
 
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
-    title: String
-    author: String
+  type MyType {
+    created: Date
   }
 
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
-    books: [Book]
+    myType: MyType
+  }
+
+  type Mutation {
+    update(value: Date): MyType
   }
 `
 
-const books = [
-  {
-    title: 'Harry Potter and the Chamber of Secrets',
-    author: 'J.K. Rowling',
-  },
-  {
-    title: 'Jurassic Park',
-    author: 'Michael Crichton',
-  },
-]
+var date = new Date()
 
 const resolvers = {
+  Date: new GraphQLScalarType({
+    name: 'Date',
+    description: 'Date custom scalar type',
+    parseValue(value) {
+      console.log('parseValue')
+      return new Date(value) // value from the client
+    },
+    serialize(value) {
+      console.log('serialize')
+      return value.getTime() // value sent to the client
+    },
+    parseLiteral(ast) {
+      console.log('parseLiteral : ', ast)
+
+      if (ast.kind === Kind.INT) {
+        return parseInt(ast.value, 10) // ast value is always in string format
+      }
+      return null
+    },
+  }),
+
+  MyType: {
+    created: value => value,
+  },
+
   Query: {
-    books: () => books,
+    myType: () => date,
+  },
+  Mutation: {
+    update: (_, { value }) => {
+      date = new Date(value)
+      return date
+    },
   },
 }
 
 const server = new ApolloServer({ typeDefs, resolvers })
 
-// The `listen` method launches a web server.
 server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`)
+  console.log(`🚀 Server ready at ${url}`)
 })
