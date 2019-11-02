@@ -34,7 +34,7 @@ const resolvers = {
     },
     parseLiteral(ast) {
       console.log('parseLiteral : ', ast)
-
+      //넘어오는 값이라서어... 오케!
       if (ast.kind === Kind.INT) {
         return parseInt(ast.value, 10) // ast value is always in string format
       }
