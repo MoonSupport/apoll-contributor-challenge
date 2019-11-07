@@ -3,56 +3,69 @@ const { Kind } = require('graphql/language')
 const { gql, ApolloServer } = require('apollo-server')
 
 const typeDefs = gql`
-  scalar Date
+  scalar Odd
+
+  enum AllowedColor {
+    RED
+    GREEN
+    BLUE
+  }
 
   type MyType {
-    created: Date
+    oddValue: Odd
   }
 
   type Query {
     myType: MyType
-  }
-
-  type Mutation {
-    update(value: Date): MyType
+    favoriteColor: AllowedColor # As a return value
+    avatar(borderColor: AllowedColor): String # As an argument
   }
 `
+var cursor = 1
 
-var date = new Date()
+function oddValue(value) {
+  console.log(value)
+  return value % 2 === 1 ? value : null
+}
 
 const resolvers = {
-  Date: new GraphQLScalarType({
-    name: 'Date',
-    description: 'Date custom scalar type',
-    parseValue(value) {
-      console.log('parseValue')
-      return new Date(value) // value from the client
-    },
-    serialize(value) {
-      console.log('serialize')
-      return value.getTime() // value sent to the client
-    },
+  Odd: new GraphQLScalarType({
+    name: 'Odd',
+    description: 'Odd custom scalar type',
+    parseValue: oddValue,
+    serialize: oddValue,
     parseLiteral(ast) {
-      console.log('parseLiteral : ', ast)
-      //넘어오는 값이라서어... 오케!
       if (ast.kind === Kind.INT) {
-        return parseInt(ast.value, 10) // ast value is always in string format
+        return oddValue(parseInt(ast.value, 10))
       }
       return null
     },
   }),
 
-  MyType: {
-    created: value => value,
+  AllowedColor: {
+    RED: '#f00',
+    GREEN: '#0f0',
+    BLUE: '#00f',
   },
 
   Query: {
-    myType: () => date,
-  },
-  Mutation: {
-    update: (_, { value }) => {
-      date = new Date(value)
-      return date
+    myType: () => {
+      return {
+        oddValue: 1,
+      }
+    },
+    favoriteColor: () => '#f00',
+    avatar: (parent, args) => {
+      if (args.borderColor == 'RED') {
+        return 'HOT'
+      }
+      if (args.borderColor == 'GREEN') {
+        return 'RELAX'
+      }
+      if (args.borderColor == 'BLUE') {
+        return 'COOL'
+      }
+      return 'NO!'
     },
   },
 }
