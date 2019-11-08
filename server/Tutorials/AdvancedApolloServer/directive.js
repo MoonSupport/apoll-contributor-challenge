@@ -39,6 +39,7 @@ const server = new ApolloServer({
   resolvers,
   schemaDirectives: {
     upper: UpperCaseDirective,
+    upperCase: UpperCaseDirective,
   },
 })
 
