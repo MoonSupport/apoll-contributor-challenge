@@ -8,7 +8,7 @@ const typeDefs = gql`
   scalar Date
 
   type Query {
-    today: Date @date
+    today: Date @date @cacheControl(maxAge: 1, scope: PUBLIC)
   }
 `
 
@@ -21,9 +21,11 @@ class FormattableDateDirective extends SchemaDirectiveVisitor {
       name: 'format',
       type: GraphQLString,
     })
+    console.log(field)
 
     field.resolve = async function(source, { format, ...otherArgs }, context, info) {
       const date = await resolve.call(this, source, otherArgs, context, info)
+      console.log(date)
       // If a format argument was not provided, default to the optional
       // defaultFormat argument taken by the @date directive:
       return formatDate(date, format || defaultFormat)
@@ -31,6 +33,12 @@ class FormattableDateDirective extends SchemaDirectiveVisitor {
 
     field.type = GraphQLString
   }
+}
+
+const resolvers = {
+  Query: {
+    today: () => new Date(),
+  },
 }
 
 const server = new ApolloServer({
